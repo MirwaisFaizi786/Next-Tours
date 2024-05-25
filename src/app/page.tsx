@@ -8,7 +8,7 @@ export default async function Home() {
   const toursData = await fetchToursData().then((data) => data.data.data);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-10">
+    <main className="flex min-h-screen flex-col items-center justify-between mt-16 ">
       <h1 className="text-4xl font-bold mb-8">Available Tours</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {toursData?.map((tour: TourType) => (

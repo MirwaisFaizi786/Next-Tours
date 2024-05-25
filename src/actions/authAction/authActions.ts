@@ -15,17 +15,18 @@ export async function getLogin(formData: FormData) {
             }),
         })
 
-    //    console.log("response ===================", await response.json().then((data) => data));
        
        
         if (response.status === 200) {
-            const token: string = await response.json().then((data) => data.token);
-            console.log(" =================== response:::", token);
-            cookies().set("jwt", token, {
+            const data = await response.json().then((data) => data);
+            cookies().set("jwt", data.token, {
                 httpOnly: true,
             })
 
-            return response.status;
+            return {
+                status: 200,
+                data: data
+            }
         }
        
     } catch (error) {
@@ -110,6 +111,27 @@ export async function signUpAction(formData: FormData) {
     }
 }
 
+
+
+export async function getLoginUserDetails() {
+    try {
+        const response = await fetch(`http://localhost:8084/api/v1/users/me`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies().get("jwt")?.value}`,
+            },
+        });
+        if(response.status === 200) {
+            return response.json();
+        }else {
+            return null
+        }
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
 
 
 export async function getSession() {

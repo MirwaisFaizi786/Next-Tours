@@ -2,10 +2,15 @@ import { getTourById } from '@/actions/tourAction/tourActions';
 import React from 'react';
 import Image from 'next/image';
 import { FaStar, FaRegStar } from 'react-icons/fa';
-import ReviewForm from '@/component/reviews/ReviewForm';
+import ReviewForm from '@/components/reviews/ReviewForm';
+import { createReview } from '@/actions/reviewAction/reviewActions';
 
 async function TourPackage({ params }: { params: { id: string } }) {
   const data = await getTourById(params.id).then((data) => data.data.data);
+ const addReview = async ( review: string, rating: number, tourId: string, userId : string ) => {
+    "use server";
+     return await createReview( review, rating, tourId, userId );
+  }
   console.log(data);
 
   const renderStars = (rating: number) => {
@@ -82,7 +87,7 @@ async function TourPackage({ params }: { params: { id: string } }) {
       </div>
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4">Add Your Review</h3>
-        <ReviewForm tourId={params.id} userId="66489b9a1197fe6ad7e7c302" />
+        <ReviewForm tourId={params.id}  addReview={addReview} />
       </div>
     </div>
   );

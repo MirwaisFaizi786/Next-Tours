@@ -1,4 +1,6 @@
 "use client";
+import { createReview } from '@/actions/reviewAction/reviewActions';
+import { useUser } from '@/store/UserProvider';
 import React, { useState, FormEvent } from 'react';
 import { FaStar } from 'react-icons/fa';
 
@@ -7,28 +9,17 @@ interface ReviewFormProps {
   userId: string;
 }
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ tourId, userId }) => {
+const ReviewForm = ({ tourId, addReview }: { tourId: string; addReview: (review: string, rating: number, tourId: string, userId: string) => Promise<void> }) => {
   const [review, setReview] = useState<string>('');
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number | null>(null);
+  const user = useUser()((state) => state.user);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    const res = await fetch('/api/v1/reviews', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ review, rating, tourId, userId })
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      console.log(data);
-    } else {
-      console.error('Error submitting review');
-    }
+    const reviews = await addReview(review, rating, tourId, user._id);
+   
+    console.log(reviews);
   };
 
   return (

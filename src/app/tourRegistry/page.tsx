@@ -1,4 +1,4 @@
-import AddTourForm from '@/component/tour/TourForm'
+import AddTourForm from '@/components/tour/TourForm'
 import React from 'react'
 
 function TourRegistrationForm() {

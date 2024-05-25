@@ -3,27 +3,32 @@ import { getLogin } from "@/actions/authAction/authActions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Button from "../Button";
+import Image from "next/image";
 
 function LoginForm() {
-    
-    const router = useRouter();
-    const ref = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const ref = useRef<HTMLFormElement>(null);
+
 
   return (
-      <form className="space-y-4 md:space-y-6" action={ async (formData) => {
-        ref.current?.reset();
-        const response = await getLogin(formData)    
-        if (response === 200) {
-        router.push("/");
-        } else {
-            console.log("error");
-        }
-    }
+    <div>
+      <form
+        className="space-y-4 md:space-y-6"
+        action={async (formData) => {
+          ref.current?.reset();
+          const response = await getLogin(formData);
 
-        }>
-        <div className="bg-red-500">
+          if (response?.status === 200) {
+            router.push("/");
+          } else {
+            console.log("error");
+          }
+        }}
+      >
+        {/* <Image src={`data:image;base64,${image}`} className="rounded-full w-28 h-28" alt={image} width={100} height={100} /> */}
+        <div>
           <label
             htmlFor="email"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -34,7 +39,7 @@ function LoginForm() {
             type="email"
             name="email"
             id="email"
-            className="bg-gray-50 border  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="name@company.com"
             required
           />
@@ -51,7 +56,7 @@ function LoginForm() {
             name="password"
             id="password"
             placeholder="••••••••"
-            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required
           />
         </div>
@@ -82,9 +87,7 @@ function LoginForm() {
             Forgot password?
           </a>
         </div>
-        <Button >
-          Sign in
-        </Button>
+        <Button>Sign in</Button>
         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
           Do not have an account yet?
           <Link
@@ -95,6 +98,7 @@ function LoginForm() {
           </Link>
         </p>
       </form>
+    </div>
   );
 }
 
