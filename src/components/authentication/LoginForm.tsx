@@ -2,31 +2,50 @@
 import { getLogin } from "@/actions/authAction/authActions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
 import React, { useRef, useState } from "react";
 import Button from "../Button";
-import Image from "next/image";
+import { z } from "zod";
+import toast from "react-hot-toast";
+
+const LoginSchema = z.object({
+  email: z.string().trim().email(),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(32, { message: "Password must be at most 32 characters long" }),
+});
 
 function LoginForm() {
   const router = useRouter();
-  const ref = useRef<HTMLFormElement>(null);
 
+  const loginAction = async (formData: FormData) => {
+
+    const result = LoginSchema.safeParse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+    
+    if (!result.success) {
+      let errorMessage ="";
+       result.error.issues.forEach((issue) => {
+        errorMessage += `${issue.path[0]} : ${issue.message}`;
+       })
+
+      toast.error(errorMessage);
+      return;
+    }
+
+     const response = await getLogin(result.data);
+    if (response?.status === 200) {
+      router.push("/");
+    } else if( response?.error?.statusCode  === 401) {
+      toast.error(response.message);
+    }
+  };
 
   return (
     <div>
-      <form
-        className="space-y-4 md:space-y-6"
-        action={async (formData) => {
-          ref.current?.reset();
-          const response = await getLogin(formData);
-
-          if (response?.status === 200) {
-            router.push("/");
-          } else {
-            console.log("error");
-          }
-        }}
-      >
+      <form className="space-y-4 md:space-y-6" action={loginAction}>
         {/* <Image src={`data:image;base64,${image}`} className="rounded-full w-28 h-28" alt={image} width={100} height={100} /> */}
         <div>
           <label

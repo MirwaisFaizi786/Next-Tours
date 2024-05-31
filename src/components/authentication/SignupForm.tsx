@@ -4,6 +4,7 @@ import Button from "../Button";
 
 function SignupForm() {
   return (
+    
     <form
       action={async (formData) => {
         await signUpAction(formData);
@@ -15,7 +16,7 @@ function SignupForm() {
           htmlFor="name"
           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-          Your email
+          Name
         </label>
         <input
           name="name"

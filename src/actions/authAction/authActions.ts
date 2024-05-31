@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 
-export async function getLogin(formData: FormData) {
+export async function getLogin(userLogin: { email: string, password: string }) {
 
     try {
         const response = await fetch('http://localhost:8084/api/v1/users/login', {
@@ -10,8 +10,8 @@ export async function getLogin(formData: FormData) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                "email": formData.get('email'),
-                "password": formData.get('password')
+                "email": userLogin.email,
+                "password": userLogin.password
             }),
         })
 
@@ -28,6 +28,7 @@ export async function getLogin(formData: FormData) {
                 data: data
             }
         }
+        return response.json();
        
     } catch (error) {
         console.log(error);
@@ -91,7 +92,7 @@ export async function signUpAction(formData: FormData) {
                 "name": name,
                 "email": email,
                 "password": password,
-                "passwordConfirm": confirmPassword
+                "passwordConfirm": confirmPassword,
             }),
         })
 
@@ -116,6 +117,7 @@ export async function signUpAction(formData: FormData) {
 export async function getLoginUserDetails() {
     try {
         const response = await fetch(`http://localhost:8084/api/v1/users/me`, {
+            cache: 'no-store',
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -134,11 +136,39 @@ export async function getLoginUserDetails() {
 }
 
 
+export async function updateUserDetails(FormData: FormData) {
+    try {
+        let headersList = {
+            "Accept": "*/*",
+            "Authorization": `Bearer ${cookies().get("jwt")?.value}`,
+           }
+           
+           let response = await fetch("http://localhost:8084/api/v1/users/updateMe", { 
+             method: "PATCH",
+             body: FormData,
+             headers: headersList
+           });
+           
+           let data = await response.text();
+           console.log(data);
+           
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+
 export async function getSession() {
     return cookies().get("jwt")?.value;
 }
 
 
 export async function logout() {
-    cookies().delete("jwt");
+    return cookies().delete("jwt");
 }
+
+
+
+
+

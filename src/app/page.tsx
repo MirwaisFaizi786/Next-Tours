@@ -6,6 +6,8 @@ import Link from "next/link";
 
 export default async function Home() {
   const toursData = await fetchToursData().then((data) => data.data.data);
+  // console.log(" toursData ========== =========================", toursData);
+  
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between mt-16 ">
@@ -15,7 +17,7 @@ export default async function Home() {
           <Link href={`/tour/${tour._id}`} key={tour._id}>
             <div className="tour-card w-full h-full border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
               <Image
-                src={`/img/tours/${tour.imageCover}`}
+                src={`http://localhost:8084/img/tours/${tour.imageCover}`}
                 alt={tour.name}
                 width={300}
                 height={200}

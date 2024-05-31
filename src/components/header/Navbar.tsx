@@ -1,11 +1,12 @@
 "use client";
 
 import { useUser } from "@/store/UserProvider";
+import { ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-function Navbar({ session }: { session: string | undefined }) {
+function Navbar({ session, userLogout }: { session: string | undefined , userLogout: () => Promise<ResponseCookies>}) {
     const userData  = useUser()((state) => state.user); 
   // const [image, setImage] =useState<string>(userData?.image);
 
@@ -15,9 +16,16 @@ function Navbar({ session }: { session: string | undefined }) {
   //     setImage(userData.image);
   //   }
   // },[ userData]);
+
+
+  const handleLogout = async () => {
+    console.log("handleLogout");
+    
+    await userLogout();
+  };
   
   return (
-    <div className="navbar bg-base-100 fixed top-0 z-30">
+    <div className="navbar flex bg-base-100 fixed top-0 z-30">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -93,7 +101,7 @@ function Navbar({ session }: { session: string | undefined }) {
               className="btn btn-ghost btn-circle avatar"
             >
               <div className="w-10 rounded-full">
-              <Image src={`data:image;base64,${userData?.image}`} className="rounded-full w-28 h-28" alt={userData?.name} width={40} height={40} />
+              <Image src={`http://localhost:8084/img/users/${userData?.photo}`} className="rounded-full w-28 h-28" alt={userData?.name} width={40} height={40} />
               </div>
             </div>
             <ul
@@ -101,16 +109,16 @@ function Navbar({ session }: { session: string | undefined }) {
               className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
             >
               <li>
-                <a className="justify-between">
+                <Link href="/dashboard" className="justify-between">
                   Profile
                   <span className="badge">New</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <a>Settings</a>
               </li>
               <li>
-                <a>Logout</a>
+                <button   onClick={handleLogout}>Logout</button>
               </li>
             </ul>
           </div>

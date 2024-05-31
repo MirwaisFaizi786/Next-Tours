@@ -9,7 +9,6 @@ type User = {
   role: string;
   passwordChangedAt: string;
   photo: string;
-  image: string;
 };
 
 type UserStore = {

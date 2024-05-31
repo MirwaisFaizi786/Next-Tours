@@ -4,14 +4,35 @@ import Image from 'next/image';
 import { FaStar, FaRegStar } from 'react-icons/fa';
 import ReviewForm from '@/components/reviews/ReviewForm';
 import { createReview } from '@/actions/reviewAction/reviewActions';
+import { Metadata } from 'next';
+
+export const generateMetadata = async ({ params }: { params: { id: string } }): Promise<Metadata> => {
+  try {
+    
+    const data = await getTourById(params.id).then((data) => data.data.data);
+    // console.log("data user  ========================= ", data);
+    
+    
+    return {
+      title: data?.name,
+    };
+  } catch (error) {
+    console.error('Error fetching tour data:', error);
+    return {
+      title: 'Tour Not Found',
+    };
+  }
+};
+
 
 async function TourPackage({ params }: { params: { id: string } }) {
+  
   const data = await getTourById(params.id).then((data) => data.data.data);
+
  const addReview = async ( review: string, rating: number, tourId: string, userId : string ) => {
     "use server";
      return await createReview( review, rating, tourId, userId );
   }
-  console.log(data);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -30,7 +51,7 @@ async function TourPackage({ params }: { params: { id: string } }) {
       <div className="flex flex-col items-center mb-8">
         <h1 className="text-4xl font-bold mb-4">{data.name}</h1>
         <h2 className="text-xl text-gray-600 mb-2">{data.summary}</h2>
-        <Image src={`/img/tours/${data.imageCover}`} alt={data.name} width={600} height={400} className="rounded-lg" />
+        <Image src={`http://localhost:8084/img/tours/${data.imageCover}`} alt={data.name} width={600} height={400} className="rounded-lg" />
       </div>
 
       <div className="flex flex-col md:flex-row gap-8 mb-8">
@@ -40,6 +61,7 @@ async function TourPackage({ params }: { params: { id: string } }) {
           <p><strong>Duration:</strong> {data.duration} days</p>
           <p><strong>Difficulty:</strong> {data.difficulty}</p>
           <p><strong>Max Group Size:</strong> {data.maxGroupSize}</p>
+          <h1>data.ratingsAverage {data.ratingsAverage}</h1>
           <p className="flex items-center"><strong>Ratings:</strong> {renderStars(data.ratingsAverage)} ({data.ratingsQuantity} reviews)</p>
           <p><strong>Description:</strong> {data.description}</p>
         </div>
@@ -68,17 +90,17 @@ async function TourPackage({ params }: { params: { id: string } }) {
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4">Images</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.images.map((image: any, index: number) => (
-            <Image key={index} src={`/img/tours/${image}`} alt={`Tour image ${index + 1}`} width={300} height={200} className="rounded-lg" />
+          {data?.images.map((image: any, index: number) => (
+            <Image key={index} src={`http://localhost:8084/img/tours/${image}`} alt={`Tour image ${index + 1}`} width={300} height={200} className="rounded-lg" />
           ))}
         </div>
       </div>
 
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4">Reviews</h3>
-        {data.reviews.map((review: any) => (
+        {data?.reviews?.map((review: any) => (
           <div key={review.id} className="mb-4 p-4 border rounded-lg">
-            <h4 className="text-xl font-bold">{review.user.name}</h4>
+            <h4 className="text-xl font-bold">{review?.user?.name}</h4>
             <p className="flex items-center"><strong>Rating:</strong> {renderStars(review.rating)}</p>
             <p>{review.review}</p>
             <p className="text-sm text-gray-500"><em>{new Date(review.createdAt).toLocaleDateString()}</em></p>

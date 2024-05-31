@@ -13,7 +13,9 @@ const ReviewForm = ({ tourId, addReview }: { tourId: string; addReview: (review:
   const [review, setReview] = useState<string>('');
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number | null>(null);
+  
   const user = useUser()((state) => state.user);
+ 
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
